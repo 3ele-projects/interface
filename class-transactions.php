@@ -184,7 +184,6 @@ class wp_transactions
         $d2 = DateTime::createFromFormat($format, $post->end_date);
         $d1 =  $d1->modify('-1 month');
         $Months = $d2->diff($d1);
-    
 
         $range_array = array();
         $m_diff = (($Months->y) * 12) + ($Months->m);
