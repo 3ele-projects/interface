@@ -11960,12 +11960,13 @@ img {
 }
 
 @media only screen and (max-width: 384px) {
+	#dataTable_overflow tr,
 	#dataTable_project tr {
 		margin-bottom: 10px;
 		display: block;
 		border: 0px;
 	}
-
+	#dataTable_overflow td,
 	#dataTable_project td {
 		display: block;
 		text-align: left;
@@ -11973,6 +11974,7 @@ img {
 		text-align: left !important;
 		border: 0px;
 	}
+	#dataTable_overflow tr td:nth-child(2),
 	#dataTable_project tr td:nth-child(2) {
 		border-bottom: 1px solid #e3e6f0;
 	}
