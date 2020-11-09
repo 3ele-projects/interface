@@ -11982,4 +11982,7 @@ img {
 	table table td:last-child {
 		border-bottom: 0;
 	}
+	table td {
+		white-space: nowrap;
+	}
 }
