@@ -23,7 +23,7 @@
             <?php foreach ($transactions->docs as $doc) : ?>
               <tr>
                 <td><?php echo $doc->post_title; ?></td>
-                <td><a class="btn btn-primary" target="_blank" href="<?php echo $doc->guid; ?>">Download</a></td>
+                <td><a class="btn btn-primary"  target="_blank" href="<?php echo $doc->guid; ?>" download="<?php echo $doc->post_title; ?>">Download</a></td>
               </tr>
             <?php endforeach; ?>
 

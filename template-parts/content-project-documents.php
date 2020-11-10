@@ -30,7 +30,7 @@
               <tr>
                 <td><?php echo $doc->post_title; ?></td>
 
-                <td><a class="btn btn-primary" href="<?php echo $doc->guid; ?>">Download</a></td>
+                <td><a class="btn btn-primary" href="<?php echo $doc->guid; ?>" download="<?php echo $doc->post_title; ?>">Download</a></td>
               </tr>
             <?php endforeach; ?>
 
