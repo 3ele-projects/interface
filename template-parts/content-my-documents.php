@@ -27,7 +27,7 @@ $current_url = home_url( add_query_arg( array(), $wp->request ) );
             <?php foreach ($transactions->docs as $doc) : ?>
               <tr>
                 <td><?php echo $doc->post_title; ?></td>
-                <td><a class="btn btn-primary"   href="<?php echo $current_url// $doc->guid; ?>" download="<?php echo $doc->post_title; ?>">Download</a></td>
+                <td><a class="btn btn-primary"   href="<?php echo  $doc->guid; ?>" download="<?php echo $doc->post_title; ?>">Download</a></td>
               </tr>
             <?php endforeach; ?>
 
@@ -40,23 +40,3 @@ $current_url = home_url( add_query_arg( array(), $wp->request ) );
   </div>
 </div>
 
-<?php 
-//header("Content-Type: application/octet-stream"); 
-  
-//$file = $_GET["file"]  . ".pdf"; 
-  
-//header("Content-Disposition: attachment; filename=" . urlencode($file));    
-//header("Content-Type: application/download"); 
-//header("Content-Description: File Transfer");             
-//header("Content-Length: " . filesize($file)); 
-  
-//flush(); // This doesn't really matter. 
-  
-//$fp = fopen($file, "r"); 
-//while (!feof($fp)) { 
-//    echo fread($fp, 65536); 
-//    flush(); // This is essential for large downloads 
-//}  
-  
-//fclose($fp);  
-?>
