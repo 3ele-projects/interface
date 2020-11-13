@@ -16,7 +16,7 @@
            
             $current_quarter = ceil($current_month / 3);
             $current_date_range = $current_quarter . '/' .$current_year;
-            var_dump($current_date_range);
+
             $next_quarter_invest_return = 0;
             foreach ($trans_obj->data_arrays as $data_array){
               if (array_key_exists($current_date_range,$data_array['data_array'])){
