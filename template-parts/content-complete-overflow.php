@@ -7,11 +7,26 @@
           global $transactions;
           global $trans_obj;
 
+       
 
           if (property_exists($transactions, 'posts')) {
             $transactions_count = count($transactions->posts);
             $current_month = date("m");
-            $next_invest_return = $trans_obj->get_next_return( $user_id, $transactions->posts);
+            $current_year = date("Y");
+           
+            $current_quarter = ceil($current_month / 3);
+            $current_date_range = $current_quarter . '/' .$current_year;
+            var_dump($current_date_range);
+            $next_quarter_invest_return = 0;
+            foreach ($trans_obj->data_arrays as $data_array){
+              if (array_key_exists($current_date_range,$data_array['data_array'])){
+                $next_quarter_invest_return += $data_array['data_array'][$current_date_range];
+              } else {
+                $next_quarter_invest_return += 0;
+              }
+          
+            }
+           $next_invest_return = $trans_obj->get_next_return( $user_id, $transactions->posts);
 
             $next_pay_out = $trans_obj->get_next_pay_out_date($current_month);
             $count_projects = $trans_obj->count_projects($transactions);
@@ -53,7 +68,7 @@
               </tr>
               <tr>
                 <td> Nächste Auszahlung </td>
-                <td class="text-xs-right text-right"><span class="h5 mb-0 font-weight-bold text-gray-800"><?php echo add_thousand_sep($next_invest_return); ?> €</span></td>
+                <td class="text-xs-right text-right"><span class="h5 mb-0 font-weight-bold text-gray-800"><?php echo add_thousand_sep($next_quarter_invest_return); ?> €</span></td>
               </tr>
               <tr>
                 <td> Datum nächster Auszahlung </td>

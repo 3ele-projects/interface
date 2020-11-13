@@ -85,7 +85,7 @@ get_header(); ?>
 
                 $arrayKeys = array_keys($data_arrays);
                 $lastArrayKey = array_pop($arrayKeys);
-
+                $trans_obj->data_arrays = $data_arrays;
             ?>
 
                 <script>

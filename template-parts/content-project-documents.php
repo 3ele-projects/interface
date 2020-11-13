@@ -43,19 +43,3 @@
   </div>
 </div>
 
-<script>
-jQuery( ".download" ).click(function(event) {
-  console.log(this);
-  event.preventDefault();
-  var addressValue =  jQuery(this).attr("href");
- //       alert(addressValue );
-  //window.open('https://docs.google.com/gview?url=urltoyour.pdf')
-  jQuery('<iframe>', {
-   src: addressValue ,
-   id:  'myFrame',
-   frameborder: 0,
-   scrolling: 'no'
-   }).appendTo('body');
-});
-
-</script>

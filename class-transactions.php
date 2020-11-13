@@ -390,9 +390,9 @@ class wp_transactions
 
 
         );
-        //$rd_query = new WP_Query( $rd_args );
 
-        $rd_query = get_posts($rd_args); #	$projects_ids[]
+
+        $rd_query = get_posts($rd_args); 
 
         return $rd_query;
     }
@@ -402,7 +402,17 @@ class wp_transactions
 
 	$complete_invest = 0;
 	foreach ($transactions as $trans) {
-       
+      // var_dump($trans);
+
+        //  var_dump( $yearQuarter);
+          $offset = date('m')%3; // modulo ftw
+ $start = new DateTime("first day of -$offset month midnight");
+ $start = $start->format('Y-m-d');
+//var_dump($offset);
+ $new_offset  = (date('n')%3);
+
+ $end  = new DateTime("last day of  $new_offset month midnight");
+ //var_dump($end->format('Y-m-d'));
 		$complete_invest += get_earnings($trans->invest, $trans->rendite);
 	}
 	return $complete_invest;
