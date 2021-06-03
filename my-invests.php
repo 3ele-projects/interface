@@ -51,21 +51,15 @@ get_header(); ?>
             $transactions = $trans_obj->get_all_transaction_obj($user_id);
             global $transactions;
             if (property_exists($transactions, 'posts')) :
-                $current_month = date("m");
-                //var_dump($transactions);
-
+                $current_month = date("n");           
                 $complete_invest = $transactions->complete_invest;
                 if (property_exists($transactions, 'posts')) {
                     $count_projects = $trans_obj->count_projects($transactions);
-
-                    $next_pay_out = $trans_obj->get_next_pay_out_date($current_month);
+                    $next_pay_out = $trans_obj->get_next_pay_out_date($current_month);       
                     $before_pay_out = $trans_obj->get_before_pay_out_date($current_month);
-                    $now = date("d/m/Y");
-
-
-                    $now = new DateTime();
-           
+                    $now = new DateTime(); 
                     $range = $trans_obj->get_date_range($transactions);
+                  //  $first_date =$range[0]; 
                     $range = array_flip($range);
                     $range = array_map(function ($val) {
                         return 0;
@@ -73,9 +67,71 @@ get_header(); ?>
                     $transactions->payouts_now_complete = 0;
                     $data_arrays = array();
 
-                    foreach ($transactions->posts as $post) {
-                        $transactions->payouts_now_complete += $trans_obj->get_complete_pay_out_from_user_from_date($before_pay_out, $post);
+             
+              
+                 /*   if ($first_date >= $before_pay_out) {
+                        $before_pay_out = $first_date;
+                    }
+*/
+            
+         
+                  
+                    /*
+                    Wenn das Startdatum der Investition in selben Quartal ist, wie die erste Auszahlung, dann gibt es keine Auszahlungen?
+                    Wenn zwischen Startdatum der Investition und jetzt kein Quartal dazwischen liegt, dann gibt es keine Auzahlungen?
+                    
+                    Infos, die wir haben:
 
+                    Startdatum der Investition
+                    Zeitpunkt JETZT.
+
+                    Fixe Zeitpunkte: 10.01. 10.04. 10.07. 10.10. 
+
+                    Wieviele Auszahlungen gab es zwischen Startdatum und 
+                    Jetzt WENN die Auszahlungsdaten immer rückwirkend pro Quartal am 10. ist?
+                    
+                    Bsp.: Startdatum 11.01.2021 || 10.01 ???
+                    JETZT: 02.06.2021 
+                    Ergebnis 1
+
+
+                    */
+        
+
+          
+                   // var_dump($payout_date->modify('-3 month')->format('d/m/Y'));
+               
+                
+               $i = 0;
+             
+               foreach ($transactions->posts as $post) {
+                $first_date = DateTime::createFromFormat('d/m/Y', $post->start_date);
+                $payout_date = $trans_obj->get_next_pay_out_date($before_pay_out->format('n'));
+                //   var_dump( $payout_date);
+                   $payout_date = DateTime::createFromFormat('d/m/Y',  $payout_date);
+
+                $year1 =  $first_date->format('Y');
+                $year2 =  $payout_date->format('Y');
+                $month1 =$first_date->format('m');
+                $month2 = $payout_date->format('m');
+              
+                $diff = (($year2 - $year1) * 12) + ($month2 - $month1);
+              //  var_dump($trans_obj->get_quartals_between_dates($first_date->format('d/m/Y'), $payout_date));
+             
+               $n = ceil($diff / 3 -1);
+     
+   
+       
+                if ($n > 0) {
+                    $last_payment_out = $payout_date->modify('-3 month');
+               //     var_dump($trans_obj);
+            
+                $transactions->payouts_now_complete += $trans_obj->get_complete_pay_out_from_user_from_date($last_payment_out , $post);
+            };
+                    
+
+
+                   
 
                         $transactions_array['post_title'] = get_the_title($post->project_id);
                         $transactions_array['data_array'] = build_quarter_array(array_merge($range, $trans_obj->get_transaction_range($post)));
@@ -86,6 +142,7 @@ get_header(); ?>
                 $arrayKeys = array_keys($data_arrays);
                 $lastArrayKey = array_pop($arrayKeys);
                 $trans_obj->data_arrays = $data_arrays;
+
             ?>
 
                 <script>

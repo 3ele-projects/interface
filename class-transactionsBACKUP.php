@@ -67,13 +67,14 @@ class wp_transactions
     {
         $first_transaction = $transactions->posts[count($transactions->posts) - 1];
         $last_transaction = $transactions->posts[0];
-        $quartals = $this->get_quartals_between_dates($first_transaction->start_date, $last_transaction->end_date);
+        $quartals = get_quartals_between_dates($first_transaction->start_date, $last_transaction->end_date);
         $date1 = $first_transaction->start_date;
         $date2 = $last_transaction->end_date;
         $d1 = new DateTime($date2);
         $d2 = new DateTime($date1);
         $Months = $d2->diff($d1);
         $howeverManyMonths = (($Months->y) * 12) + ($Months->m);
+  
     }
 
 
@@ -83,7 +84,6 @@ class wp_transactions
 
         $format = 'd/m/Y';
         $next_pay_out_day = DateTime::createFromFormat($format, $this->get_next_pay_out_date($current_month));
-
         $last_pay_out_day =  $next_pay_out_day->modify('-3 month');
         return $last_pay_out_day;
     }
@@ -93,26 +93,28 @@ class wp_transactions
     function get_next_pay_out_date($current_month)
     {
         $year = date("Y");
+
+		
+
+
         if ($current_month >= 1 && $current_month <= 3) {
-            
             $dt = strtotime($year . "-04-10");
 
+		
+			
+			$pay_out_date = date("d/m/Y", $dt);
 
-            $pay_out_date = date("d/m/Y", $dt);
+
         } else  if ($current_month >= 4 && $current_month <= 6) {
             $dt = strtotime($year . "-07-10");
             $pay_out_date = date("d/m/Y", $dt);
         } else  if ($current_month >= 7 && $current_month <= 9) {
-            $dt = strtotime($year . "-10-10");
+            $dt = strtotime($year . "-04-10");
             $pay_out_date = date("d/m/Y", $dt);
         } else  if ($current_month >= 10 && $current_month <= 12) {
-
-            $dt = strtotime($year . "-01-10");
-            $year = $year +1;
             $pay_out_date = date("d/m/Y", strtotime("1 year", $dt));
             //$pay_out_date = date("d/m/Y", strtotime("1 month", $dt));
         }
-       // var_dump($pay_out_date);
         return $pay_out_date;
     }
 
@@ -157,7 +159,7 @@ class wp_transactions
             $period_start = $period_start->format('m');
             $period_end = $period_end->format('m');
             $multiplikator = $this->get_between($start_date_obj->format('m'), $period_start, $period_end);
-
+ 
             $complete_earnings += $multiplikator * $this->get_earnings($post->invest, $post->rendite);
 
 
@@ -178,6 +180,7 @@ class wp_transactions
                 $complete_earnings += $this->get_earnings($post->invest, $post->rendite) * 3;
             }
         }
+
     }
 
     function get_transaction_range($post)
@@ -190,7 +193,7 @@ class wp_transactions
 
         $range_array = array();
         $m_diff = (($Months->y) * 12) + ($Months->m);
-
+       
         $i = 0;
 
         while ($i < $m_diff) {
@@ -254,26 +257,13 @@ class wp_transactions
 
     function get_complete_pay_out_from_user_from_date($date, $transaction)
     {
-
-      
         $format = 'd/m/Y';
-
         $last_day = $date->modify('first day of this month');
-        // $now = DateTime::createFromFormat($format, date("Y-m-d"));
+        //  var_dump($transaction->end_date);
         $end_date = DateTime::createFromFormat($format, $transaction->end_date);
         $start_date = DateTime::createFromFormat($format, $transaction->start_date);
-
-
-        $mynow = (new DateTime())->modify('last day of last month')->format($format);
-
-
-        $month = date("n");
-
-
-
-        $date_between = $month - $start_date->format('n');
+        // var_dump($last_day);
         $complete_payout = 0;
-        //   if (count($this->get_quarters(date("Y-m-d"), $transaction->start_date)) > 0){
         if ($last_day <= $end_date) {
 
             $Months = $last_day->diff($start_date);
@@ -282,9 +272,14 @@ class wp_transactions
             $m_diff = (($Months->y) * 12) + ($Months->m);
 
             $i = 0;
-         
-            $complete_payout += $this->get_earnings($transaction->invest, $transaction->rendite)*$m_diff;
-  
+
+            while ($i < $m_diff) {
+
+                $complete_payout += $this->get_earnings($transaction->invest, $transaction->rendite);
+
+
+                $i += 1;
+            }
         } else {
             $Months = $end_date->diff($start_date);
             // var_dump(  $Months);
@@ -295,7 +290,6 @@ class wp_transactions
 
             while ($i < $m_diff) {
                 $c_date =   $start_date->modify('+1 month');
-                //     var_dump($this->get_earnings($transaction->invest, $transaction->rendite));
                 $complete_payout += $this->get_earnings($transaction->invest, $transaction->rendite);
 
 
@@ -303,8 +297,8 @@ class wp_transactions
             }
         }
         return $complete_payout;
-        //   }
     }
+
 
 
     function get_quartals_between_dates($start_date, $end_date)
@@ -361,12 +355,15 @@ class wp_transactions
 
                 $current_quarter = new stdClass();
 
-                $end_month_nwebsiteum = $this->zero_pad($q * 3);
+                $end_month_num = zero_pad($q * 3);
                 $start_month_num = ($end_month_num - 2);
 
- 
-                $current_quarter->period_start = "$y-$start_month_num-01"; 
-                $current_quarter->period_end = "$y-$end_month_num-" . $this->month_end_date($y, $end_month_num);
+                $q_start_month = month_name($start_month_num);
+                $q_end_month = month_name($end_month_num);
+
+                //    $current_quarter->period = "Qtr $q ($q_start_month - $q_end_month) $y";
+                $current_quarter->period_start = "$y-$start_month_num-01";      // yyyy-mm-dd    
+                $current_quarter->period_end = "$y-$end_month_num-" . month_end_date($y, $end_month_num);
 
                 $quarters[] = $current_quarter;
                 unset($current_quarter);
@@ -401,39 +398,40 @@ class wp_transactions
         );
 
 
-        $rd_query = get_posts($rd_args);
+        $rd_query = get_posts($rd_args); 
 
         return $rd_query;
     }
 
     function get_next_return($user_id, $transactions)
-    {
+{
 
-        $complete_invest = 0;
-        foreach ($transactions as $trans) {
-            // var_dump($trans);
+	$complete_invest = 0;
+	foreach ($transactions as $trans) {
+      // var_dump($trans);
 
-            //  var_dump( $yearQuarter);
-            $offset = date('m') % 3; // modulo ftw
-            $start = new DateTime("first day of -$offset month midnight");
-            $start = $start->format('Y-m-d');
-            //var_dump($offset);
-            $new_offset  = (date('n') % 3);
+        //  var_dump( $yearQuarter);
+          $offset = date('m')%3; // modulo ftw
+ $start = new DateTime("first day of -$offset month midnight");
+ $start = $start->format('Y-m-d');
+//var_dump($offset);
+ $new_offset  = (date('n')%3);
 
-            $end  = new DateTime("last day of  $new_offset month midnight");
-            //var_dump($end->format('Y-m-d'));
-            $complete_invest += get_earnings($trans->invest, $trans->rendite);
-        }
-        return $complete_invest;
-    }
+ $end  = new DateTime("last day of  $new_offset month midnight");
+ //var_dump($end->format('Y-m-d'));
+		$complete_invest += get_earnings($trans->invest, $trans->rendite);
+	}
+	return $complete_invest;
+}
 
-    function get_avg_return($complete_invests, $next_invest_return)
-    {
+function get_avg_return( $complete_invests, $next_invest_return)
+{
 
-        $avg_return = ($next_invest_return / $complete_invests) * 100;
+	$avg_return = ($next_invest_return / $complete_invests) * 100;
 
-        return $avg_return;
-    }
+	return $avg_return;
+}
+
 }
 
 function post_end_date($post)

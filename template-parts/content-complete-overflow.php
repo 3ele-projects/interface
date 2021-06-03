@@ -6,7 +6,7 @@
 
           global $transactions;
           global $trans_obj;
-
+ 
        
 
           if (property_exists($transactions, 'posts')) {
@@ -26,12 +26,15 @@
               }
           
             }
+
+            
            $next_invest_return = $trans_obj->get_next_return( $user_id, $transactions->posts);
 
             $next_pay_out = $trans_obj->get_next_pay_out_date($current_month);
             $count_projects = $trans_obj->count_projects($transactions);
             $complete_invest =  $transactions->complete_invest;
-            $transactions->payouts_now_complete;
+         //   var_dump($transactions->payouts_now_complete);
+          
             $avg_rendite = $trans_obj->get_avg_return( $complete_invest, $next_invest_return);
 
           }

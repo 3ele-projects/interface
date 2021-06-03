@@ -6,18 +6,29 @@ global $trans_obj;
 
 $transactions = $trans_obj->get_all_transaction_obj($user_id);
 global $transactions;
+
+/* */
+$start_month = 1;
+//echo 'Startmonth';
+//var_dump($trans_obj->get_next_pay_out_date($start_month));
+//var_dump($trans_obj->get_next_pay_out_date($current_month));
+$d1 = new DateTime($trans_obj->get_next_pay_out_date($current_month));
+$d2 = new DateTime($trans_obj->get_next_pay_out_date($start_month));
+$dt = strtotime($trans_obj->get_next_pay_out_date($current_month));
+//var_dump($d1);
 $next_pay_out = $trans_obj->get_next_pay_out_date($current_month);
 $before_pay_out = $trans_obj->get_before_pay_out_date($current_month);
+
 $range = $trans_obj->get_date_range($transactions);
 $range = array_flip($range);
 $range = array_map(function ($val) {
     return 0;
 }, $range);
-$transactions->payouts_now_complete = 0;
+//$transactions->payouts_now_complete = 0;
 $data_arrays = array();
 
 foreach ($transactions->posts as $post) {
-    $transactions->payouts_now_complete += $trans_obj->get_complete_pay_out_from_user_from_date($before_pay_out, $post);
+
 
 
     $transactions_array['post_title'] = get_the_title($post->project_id);
@@ -29,7 +40,6 @@ foreach ($transactions->posts as $post) {
 
 
 
-//var_dump(   $labels );
 
 $arrayKeys = array_keys($data_arrays);
 // Fetch last array key
@@ -140,7 +150,7 @@ $lastArrayKey = array_pop($arrayKeys);
 
             <script>
                 jQuery(document).ready(function() {
-                    var  resizeId;
+                    var resizeId;
                     var chart1 = new Chart(document.getElementById("chartjs-1"), {
                         "type": "bar",
                         "data": data,

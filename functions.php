@@ -525,7 +525,8 @@ function dashboard_remove_menu_pages()
 add_filter('acf/settings/show_admin', 'my_acf_settings_show_admin');
 function my_acf_settings_show_admin($show_admin)
 {
-	return false;
+//	return false;
+return true;
 }
 
 function add_additional_class_on_li($classes, $item, $args)
